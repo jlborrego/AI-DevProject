@@ -1,0 +1,11 @@
+{
+  "name": "ai-devproject",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:smoke": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.30.0"
+  }
+}

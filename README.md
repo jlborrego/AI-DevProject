@@ -39,7 +39,14 @@ mvn -q exec:java -Dexec.mainClass=com.example.App
 ```
 
 The application listens on `http://localhost:7000`.
-Open the browser at `http://localhost:7000/` to use the new TaskMaster dashboard UI.
+
+### Web dashboard
+- Open `http://localhost:7000/` in your browser to access the TaskMaster dashboard.
+- Use the search box to find tasks by title or description.
+- Filter tasks by status: `pending`, `in_progress`, or `completed`.
+- Create and edit tasks through the modal dialog.
+- Delete tasks directly from the task cards.
+
 The REST API remains available at the same host for integrations and tests.
 
 ## Task Management API

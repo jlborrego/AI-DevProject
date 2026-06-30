@@ -39,6 +39,8 @@ mvn -q exec:java -Dexec.mainClass=com.example.App
 ```
 
 The application listens on `http://localhost:7000`.
+Open the browser at `http://localhost:7000/` to use the new TaskMaster dashboard UI.
+The REST API remains available at the same host for integrations and tests.
 
 ## Task Management API
 

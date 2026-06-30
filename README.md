@@ -16,7 +16,7 @@ A **backend API** for managing daily tasks and team assignments.
 
 > [!WARNING]
 > TaskMaster is a training project designed for demonstration purposes.
-> The system is focused on mastering Java core concepts and object-oriented programming. 
+> The system is focused on mastering Java core concepts and object-oriented programming.
 > Not for production use; data is managed in-memory, so no database is required at this initial stage.
 
 ---
@@ -29,3 +29,39 @@ A **backend API** for managing daily tasks and team assignments.
 - **Socials**:
   - [GitHub](https://github.com/TuUsuario)
   - [LinkedIn](https://www.linkedin.com/in/TuUsuario/)
+
+## Running the Project
+
+Start the API server with Maven:
+
+```bash
+mvn -q exec:java -Dexec.mainClass=com.example.App
+```
+
+The application listens on `http://localhost:7000`.
+
+## Task Management API
+
+- `GET /tasks` - list all tasks
+- `GET /tasks/{id}` - retrieve a task by id
+- `POST /tasks` - create a new task
+- `PUT /tasks/{id}` - update an existing task
+- `DELETE /tasks/{id}` - delete a task
+
+Task JSON payload example:
+
+```json
+{
+  "title": "Write release notes",
+  "description": "Document the new task API endpoints",
+  "status": "pending"
+}
+```
+
+## Smoke Tests
+
+Run the Playwright smoke tests with:
+
+```bash
+npm run test:smoke
+```

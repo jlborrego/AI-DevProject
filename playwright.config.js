@@ -8,7 +8,7 @@ module.exports = defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'mvn -q exec:java -Dexec.mainClass=App',
+    command: 'mvn -q exec:java -Dexec.mainClass=com.example.App',
     url: 'http://127.0.0.1:7000/health',
     reuseExistingServer: true,
     timeout: 120000,

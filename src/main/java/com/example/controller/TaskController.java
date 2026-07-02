@@ -21,9 +21,9 @@ public class TaskController {
             .post("/tasks", this::createTask)
             .put("/tasks/{id}", this::updateTask)
             .delete("/tasks/{id}", this::deleteTask)
-            .exception(NotFoundException.class, (e, ctx) -> handleNotFound(ctx, e))
-            .exception(InvalidTaskException.class, (e, ctx) -> handleBadRequest(ctx, e))
-            .exception(Exception.class, (e, ctx) -> handleServerError(ctx, e));
+            .exception(NotFoundException.class, (exception, ctx) -> handleNotFound(ctx, exception))
+            .exception(InvalidTaskException.class, (exception, ctx) -> handleBadRequest(ctx, exception))
+            .exception(Exception.class, (exception, ctx) -> handleServerError(ctx, exception));
     }
 
     private void listTasks(Context ctx) {
@@ -32,7 +32,8 @@ public class TaskController {
 
     private void getTaskById(Context ctx) {
         int id = parseId(ctx);
-        Task task = service.findById(id).orElseThrow(() -> new NotFoundException("Task not found: " + id));
+        Task task = service.findById(id)
+            .orElseThrow(() -> new NotFoundException("Task not found: " + id));
         ctx.json(task);
     }
 
@@ -75,11 +76,6 @@ public class TaskController {
         }
     }
 
-    private static final class ErrorResponse {
-        public final String error;
-
-        public ErrorResponse(String error) {
-            this.error = error;
-        }
+    private record ErrorResponse(String error) {
     }
 }

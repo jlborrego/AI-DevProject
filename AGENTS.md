@@ -7,7 +7,7 @@
 ## Technical Implementation
 
 ### Tech Stack
-- Language: **Java 21**
+- Language: **Java 25**
 - Framework: **Javalin 7.2.2**
 - Database: **None, in-memory storage**
 - Security: **No auth in the demo app**

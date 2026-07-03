@@ -40,6 +40,11 @@ mvn -q exec:java -Dexec.mainClass=com.example.App
 
 The application listens on `http://localhost:7000`.
 
+## Requirements
+
+- JDK 25 or later (the project is compiled with Java 25).
+- Node.js 18+ for running Playwright smoke tests.
+
 ### Web dashboard
 - Open `http://localhost:7000/` in your browser to access the TaskMaster dashboard.
 - Use the search box to find tasks by title or description.

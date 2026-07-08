@@ -8,14 +8,16 @@ import java.util.Map;
 
 public class App {
     private static final int PORT = 7000;
+    private static final String LOG_PREFIX = "[TaskMaster]";
 
     public static void main(String[] args) {
+        System.out.println(LOG_PREFIX + " Starting application...");
         TaskService taskService = new TaskService();
         TaskController taskController = new TaskController(taskService);
 
         Javalin app = createApp(taskController);
         app.start(PORT);
-        System.out.println("Server started on http://localhost:" + PORT);
+        System.out.println(LOG_PREFIX + " Server started on http://localhost:" + PORT);
     }
 
     private static Javalin createApp(TaskController taskController) {

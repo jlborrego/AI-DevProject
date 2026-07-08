@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TaskService {
+    private static final String LOG_PREFIX = "[TaskMaster]";
     private static final String TASK_PAYLOAD_REQUIRED = "Task payload is required";
     private static final String TASK_TITLE_REQUIRED = "Task title is required";
     private static final String TASK_DESCRIPTION_REQUIRED = "Task description is required";
@@ -31,6 +32,7 @@ public class TaskService {
     public Task create(TaskRequest request) {
         validateRequest(request);
         int id = nextId.getAndIncrement();
+        log("Creating task with id " + id);
         return saveTask(id, request);
     }
 
@@ -39,6 +41,7 @@ public class TaskService {
         if (!tasks.containsKey(id)) {
             throw new NotFoundException("Task not found: " + id);
         }
+        log("Updating task with id " + id);
         return saveTask(id, request);
     }
 
@@ -47,21 +50,26 @@ public class TaskService {
         if (removed == null) {
             throw new NotFoundException("Task not found: " + id);
         }
+        log("Deleted task with id " + id);
     }
 
     public void validateRequest(TaskRequest request) {
         if (request == null) {
+            log("Validation failed: task payload is required");
             throw new InvalidTaskException(TASK_PAYLOAD_REQUIRED);
         }
         if (isBlank(request.title())) {
+            log("Validation failed: task title is required");
             throw new InvalidTaskException(TASK_TITLE_REQUIRED);
         }
         if (isBlank(request.description())) {
+            log("Validation failed: task description is required");
             throw new InvalidTaskException(TASK_DESCRIPTION_REQUIRED);
         }
         try {
             TaskStatus.from(request.status());
         } catch (IllegalArgumentException ex) {
+            log("Validation failed: invalid status '" + request.status() + "'");
             throw new InvalidTaskException(ex.getMessage());
         }
     }
@@ -79,5 +87,9 @@ public class TaskService {
 
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    private void log(String message) {
+        System.out.println(LOG_PREFIX + " " + message);
     }
 }

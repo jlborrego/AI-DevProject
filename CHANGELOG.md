@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added basic console logging for application startup, request handling, task lifecycle actions, and validation failures.
+
 ## 1.0.0 - 2026-06-30
 
 ### Features

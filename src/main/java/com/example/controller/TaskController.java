@@ -9,6 +9,7 @@ import io.javalin.config.RoutesConfig;
 import io.javalin.http.Context;
 
 public class TaskController {
+    private static final String LOG_PREFIX = "[TaskMaster]";
     private final TaskService service;
 
     public TaskController(TaskService service) {
@@ -27,17 +28,20 @@ public class TaskController {
     }
 
     private void listTasks(Context ctx) {
+        log("Handling GET /tasks");
         ctx.json(service.findAll());
     }
 
     private void getTaskById(Context ctx) {
         int id = parseId(ctx);
+        log("Handling GET /tasks/" + id);
         Task task = service.findById(id)
             .orElseThrow(() -> new NotFoundException("Task not found: " + id));
         ctx.json(task);
     }
 
     private void createTask(Context ctx) {
+        log("Handling POST /tasks");
         TaskRequest request = ctx.bodyAsClass(TaskRequest.class);
         Task created = service.create(request);
         ctx.status(201).json(created);
@@ -45,6 +49,7 @@ public class TaskController {
 
     private void updateTask(Context ctx) {
         int id = parseId(ctx);
+        log("Handling PUT /tasks/" + id);
         TaskRequest request = ctx.bodyAsClass(TaskRequest.class);
         Task updated = service.update(id, request);
         ctx.json(updated);
@@ -52,19 +57,23 @@ public class TaskController {
 
     private void deleteTask(Context ctx) {
         int id = parseId(ctx);
+        log("Handling DELETE /tasks/" + id);
         service.delete(id);
         ctx.status(204);
     }
 
     private void handleNotFound(Context ctx, RuntimeException exception) {
+        logError("Resource not found", exception);
         ctx.status(404).json(new ErrorResponse(exception.getMessage()));
     }
 
     private void handleBadRequest(Context ctx, RuntimeException exception) {
+        logError("Invalid request", exception);
         ctx.status(400).json(new ErrorResponse(exception.getMessage()));
     }
 
     private void handleServerError(Context ctx, Exception exception) {
+        logError("Unhandled server error", exception);
         ctx.status(500).json(new ErrorResponse("Internal server error"));
     }
 
@@ -74,6 +83,14 @@ public class TaskController {
         } catch (NumberFormatException ex) {
             throw new InvalidTaskException("Invalid task id");
         }
+    }
+
+    private void log(String message) {
+        System.out.println(LOG_PREFIX + " " + message);
+    }
+
+    private void logError(String message, Exception exception) {
+        System.out.println(LOG_PREFIX + " " + message + ": " + exception.getMessage());
     }
 
     private record ErrorResponse(String error) {

@@ -8,9 +8,9 @@ module.exports = defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'mvn -q exec:java -Dexec.mainClass=com.example.App',
+    command: 'mvn -q spring-boot:run',
     url: 'http://127.0.0.1:7000/health',
     reuseExistingServer: true,
-    timeout: 120000,
+    timeout: 240000,
   },
 });

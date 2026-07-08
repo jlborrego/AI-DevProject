@@ -5,9 +5,23 @@ import com.example.exception.NotFoundException;
 import com.example.model.Task;
 import com.example.model.TaskRequest;
 import com.example.service.TaskService;
-import io.javalin.config.RoutesConfig;
-import io.javalin.http.Context;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.List;
+
+@RestController
+@RequestMapping("/tasks")
 public class TaskController {
     private static final String LOG_PREFIX = "[TaskMaster]";
     private final TaskService service;
@@ -16,70 +30,73 @@ public class TaskController {
         this.service = service;
     }
 
-    public void registerRoutes(RoutesConfig routes) {
-        routes.get("/tasks", this::listTasks)
-            .get("/tasks/{id}", this::getTaskById)
-            .post("/tasks", this::createTask)
-            .put("/tasks/{id}", this::updateTask)
-            .delete("/tasks/{id}", this::deleteTask)
-            .exception(NotFoundException.class, (exception, ctx) -> handleNotFound(ctx, exception))
-            .exception(InvalidTaskException.class, (exception, ctx) -> handleBadRequest(ctx, exception))
-            .exception(Exception.class, (exception, ctx) -> handleServerError(ctx, exception));
-    }
-
-    private void listTasks(Context ctx) {
+    @GetMapping
+    public List<Task> listTasks() {
         log("Handling GET /tasks");
-        ctx.json(service.findAll());
+        return service.findAll();
     }
 
-    private void getTaskById(Context ctx) {
-        int id = parseId(ctx);
-        log("Handling GET /tasks/" + id);
-        Task task = service.findById(id)
-            .orElseThrow(() -> new NotFoundException("Task not found: " + id));
-        ctx.json(task);
+    @GetMapping("/{id}")
+    public Task getTaskById(@PathVariable String id) {
+        int taskId = parseId(id);
+        log("Handling GET /tasks/" + taskId);
+        return service.findById(taskId)
+            .orElseThrow(() -> new NotFoundException("Task not found: " + taskId));
     }
 
-    private void createTask(Context ctx) {
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Task createTask(@RequestBody TaskRequest request) {
         log("Handling POST /tasks");
-        TaskRequest request = ctx.bodyAsClass(TaskRequest.class);
-        Task created = service.create(request);
-        ctx.status(201).json(created);
+        return service.create(request);
     }
 
-    private void updateTask(Context ctx) {
-        int id = parseId(ctx);
-        log("Handling PUT /tasks/" + id);
-        TaskRequest request = ctx.bodyAsClass(TaskRequest.class);
-        Task updated = service.update(id, request);
-        ctx.json(updated);
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable String id, @RequestBody TaskRequest request) {
+        int taskId = parseId(id);
+        log("Handling PUT /tasks/" + taskId);
+        return service.update(taskId, request);
     }
 
-    private void deleteTask(Context ctx) {
-        int id = parseId(ctx);
-        log("Handling DELETE /tasks/" + id);
-        service.delete(id);
-        ctx.status(204);
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTask(@PathVariable String id) {
+        int taskId = parseId(id);
+        log("Handling DELETE /tasks/" + taskId);
+        service.delete(taskId);
     }
 
-    private void handleNotFound(Context ctx, RuntimeException exception) {
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFound(NotFoundException exception) {
         logError("Resource not found", exception);
-        ctx.status(404).json(new ErrorResponse(exception.getMessage()));
+        return new ErrorResponse(exception.getMessage());
     }
 
-    private void handleBadRequest(Context ctx, RuntimeException exception) {
+    @ExceptionHandler(InvalidTaskException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequest(InvalidTaskException exception) {
         logError("Invalid request", exception);
-        ctx.status(400).json(new ErrorResponse(exception.getMessage()));
+        return new ErrorResponse(exception.getMessage());
     }
 
-    private void handleServerError(Context ctx, Exception exception) {
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        logError("Invalid request", exception);
+        return new ErrorResponse("Invalid task id");
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleServerError(Exception exception) {
         logError("Unhandled server error", exception);
-        ctx.status(500).json(new ErrorResponse("Internal server error"));
+        return new ErrorResponse("Internal server error");
     }
 
-    private int parseId(Context ctx) {
+    private int parseId(String value) {
         try {
-            return Integer.parseInt(ctx.pathParam("id"));
+            return Integer.parseInt(value);
         } catch (NumberFormatException ex) {
             throw new InvalidTaskException("Invalid task id");
         }

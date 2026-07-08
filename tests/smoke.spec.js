@@ -12,6 +12,6 @@ test('root route serves the task dashboard UI', async ({ request }) => {
 
   expect(response.ok()).toBeTruthy();
   const body = await response.text();
-  expect(body).toContain('TaskMaster Dashboard');
+  expect(body).toContain('TaskFlow cockpit');
   expect(body).toContain('Create task');
 });

@@ -5,6 +5,7 @@ import com.example.exception.NotFoundException;
 import com.example.model.Task;
 import com.example.model.TaskRequest;
 import com.example.model.TaskStatus;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Service
 public class TaskService {
     private static final String LOG_PREFIX = "[TaskMaster]";
     private static final String TASK_PAYLOAD_REQUIRED = "Task payload is required";

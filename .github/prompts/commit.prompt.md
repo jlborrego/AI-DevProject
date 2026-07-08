@@ -1,11 +1,25 @@
 ---
 name: commit
-description: Describe when to use this prompt
+description: Commits pending changes.
 agent: agent
 model: Auto (copilot)
-tools: [execute, read]
+tools: ['execute', 'read']
 ---
+# Commit Changes
 
-<!-- Tip: Use /create-prompt in chat to generate content with agent assistance -->
+## Role
 
-Define the prompt content here. You can include instructions, examples, and any other relevant information to guide the AI's responses.
+Act as a software developer. 
+
+## Task
+
+Commit the pending changes.
+Use the terminal tool to run git commands.
+
+## Context
+
+Use the `committing-changes` skill as reference.
+
+## Output checklist:
+
+- [ ] There are no uncommitted changes in the current branch.

@@ -32,14 +32,14 @@ public class TaskController {
 
     @GetMapping
     public List<Task> listTasks() {
-        log("Handling GET /tasks");
+        logRequest("GET", null);
         return service.findAll();
     }
 
     @GetMapping("/{id}")
     public Task getTaskById(@PathVariable String id) {
         int taskId = parseId(id);
-        log("Handling GET /tasks/" + taskId);
+        logRequest("GET", taskId);
         return service.findById(taskId)
             .orElseThrow(() -> new NotFoundException("Task not found: " + taskId));
     }
@@ -47,14 +47,14 @@ public class TaskController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Task createTask(@RequestBody TaskRequest request) {
-        log("Handling POST /tasks");
+        logRequest("POST", null);
         return service.create(request);
     }
 
     @PutMapping("/{id}")
     public Task updateTask(@PathVariable String id, @RequestBody TaskRequest request) {
         int taskId = parseId(id);
-        log("Handling PUT /tasks/" + taskId);
+        logRequest("PUT", taskId);
         return service.update(taskId, request);
     }
 
@@ -62,7 +62,7 @@ public class TaskController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTask(@PathVariable String id) {
         int taskId = parseId(id);
-        log("Handling DELETE /tasks/" + taskId);
+        logRequest("DELETE", taskId);
         service.delete(taskId);
     }
 
@@ -100,6 +100,11 @@ public class TaskController {
         } catch (NumberFormatException ex) {
             throw new InvalidTaskException("Invalid task id");
         }
+    }
+
+    private void logRequest(String method, Integer taskId) {
+        String path = taskId == null ? "/tasks" : "/tasks/" + taskId;
+        log("Handling " + method + " " + path);
     }
 
     private void log(String message) {

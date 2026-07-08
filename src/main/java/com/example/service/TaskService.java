@@ -77,8 +77,13 @@ public class TaskService {
     }
 
     private Task saveTask(int id, TaskRequest request) {
-        String normalizedStatus = TaskStatus.from(request.status()).value();
-        Task task = new Task(id, normalizeValue(request.title()), normalizeValue(request.description()), normalizedStatus);
+        TaskStatus status = TaskStatus.from(request.status());
+        Task task = new Task(
+            id,
+            normalizeValue(request.title()),
+            normalizeValue(request.description()),
+            status.value()
+        );
         tasks.put(id, task);
         return task;
     }

@@ -1,7 +1,6 @@
 package com.example.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -9,10 +8,17 @@ import java.util.Map;
 
 @Controller
 public class TaskPageController {
+    
+    // Serve the React SPA
     @GetMapping("/")
-    public String dashboard(Model model) {
-        model.addAttribute("pageTitle", "TaskFlow cockpit");
-        return "dashboard";
+    public String dashboard() {
+        return "forward:/index.html";
+    }
+    
+    // Catch-all for SPA routing - serve index.html for client-side routing
+    @GetMapping("/{path:^(?!api|health|static|assets).*}")
+    public String catchAll() {
+        return "forward:/index.html";
     }
 
     @GetMapping("/health")
@@ -21,3 +27,4 @@ public class TaskPageController {
         return Map.of("status", "UP");
     }
 }
+

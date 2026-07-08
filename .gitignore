@@ -28,6 +28,12 @@ target/
 
 # Node/npm
 node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Spring Boot static generated
+src/main/resources/static/
+!src/main/resources/static/.gitkeep
 
 # IDE
 .vscode/

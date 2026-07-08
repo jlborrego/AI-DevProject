@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/components/Overview.tsx","./src/components/TaskCard.tsx","./src/components/TaskForm.tsx","./src/components/TaskList.tsx","./src/hooks/useTasks.ts","./src/services/api.ts","./src/stores/taskStore.ts","./src/test/setup.ts","./src/types/index.ts"],"version":"5.9.3"}

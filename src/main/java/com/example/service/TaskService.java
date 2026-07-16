@@ -1,21 +1,24 @@
 package com.example.service;
 
-import com.example.exception.InvalidTaskException;
-import com.example.exception.NotFoundException;
-import com.example.model.Task;
-import com.example.model.TaskRequest;
-import com.example.model.TaskStatus;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.example.exception.InvalidTaskException;
+import com.example.exception.NotFoundException;
+import com.example.model.Task;
+import com.example.model.TaskRequest;
+import com.example.model.TaskStatus;
+
 @Service
 public class TaskService {
-    private static final String LOG_PREFIX = "[TaskMaster]";
+    private static final Logger log = LoggerFactory.getLogger(TaskService.class);
     private static final String TASK_PAYLOAD_REQUIRED = "Task payload is required";
     private static final String TASK_TITLE_REQUIRED = "Task title is required";
     private static final String TASK_DESCRIPTION_REQUIRED = "Task description is required";
@@ -79,11 +82,10 @@ public class TaskService {
     private Task saveTask(int id, TaskRequest request) {
         TaskStatus status = TaskStatus.from(request.status());
         Task task = new Task(
-            id,
-            normalizeValue(request.title()),
-            normalizeValue(request.description()),
-            status.value()
-        );
+                id,
+                normalizeValue(request.title()),
+                normalizeValue(request.description()),
+                status.value());
         tasks.put(id, task);
         return task;
     }
@@ -97,6 +99,6 @@ public class TaskService {
     }
 
     private void log(String message) {
-        System.out.println(LOG_PREFIX + " " + message);
+        log.info(message);
     }
 }

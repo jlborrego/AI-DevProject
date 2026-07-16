@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Task Management API', () => {
   test('create, list, retrieve, update, and delete a task', async ({ request }) => {
-    const createResponse = await request.post('/tasks', {
+    const createResponse = await request.post('/api/tasks', {
       headers: { 'Content-Type': 'application/json' },
       data: JSON.stringify({
         title: 'Prepare release notes',
@@ -20,17 +20,17 @@ test.describe('Task Management API', () => {
     });
     expect(typeof task.id).toBe('number');
 
-    const listResponse = await request.get('/tasks');
+    const listResponse = await request.get('/api/tasks');
     expect(listResponse.ok()).toBeTruthy();
     const tasks = await listResponse.json();
     expect(Array.isArray(tasks)).toBeTruthy();
     expect(tasks.some((item) => item.id === task.id)).toBeTruthy();
 
-    const getResponse = await request.get(`/tasks/${task.id}`);
+    const getResponse = await request.get(`/api/tasks/${task.id}`);
     expect(getResponse.ok()).toBeTruthy();
     await expect(getResponse.json()).resolves.toMatchObject(task);
 
-    const updateResponse = await request.put(`/tasks/${task.id}`, {
+    const updateResponse = await request.put(`/api/tasks/${task.id}`, {
       headers: { 'Content-Type': 'application/json' },
       data: JSON.stringify({
         title: 'Prepare release notes',
@@ -43,15 +43,15 @@ test.describe('Task Management API', () => {
     expect(updated.status).toBe('in_progress');
     expect(updated.description).toBe('Update task API acceptance coverage');
 
-    const deleteResponse = await request.delete(`/tasks/${task.id}`);
+    const deleteResponse = await request.delete(`/api/tasks/${task.id}`);
     expect(deleteResponse.status()).toBe(204);
 
-    const notFoundResponse = await request.get(`/tasks/${task.id}`);
+    const notFoundResponse = await request.get(`/api/tasks/${task.id}`);
     expect(notFoundResponse.status()).toBe(404);
   });
 
   test('rejects invalid status values', async ({ request }) => {
-    const response = await request.post('/tasks', {
+    const response = await request.post('/api/tasks', {
       headers: { 'Content-Type': 'application/json' },
       data: JSON.stringify({
         title: 'Invalid status task',
@@ -66,7 +66,7 @@ test.describe('Task Management API', () => {
   });
 
   test('rejects incomplete payloads', async ({ request }) => {
-    const response = await request.post('/tasks', {
+    const response = await request.post('/api/tasks', {
       headers: { 'Content-Type': 'application/json' },
       data: JSON.stringify({
         title: 'Missing description',
@@ -80,7 +80,7 @@ test.describe('Task Management API', () => {
   });
 
   test('returns 404 for non-existent tasks', async ({ request }) => {
-    const response = await request.get('/tasks/999999');
+    const response = await request.get('/api/tasks/999999');
     expect(response.status()).toBe(404);
     const payload = await response.json();
     expect(payload.error).toContain('Task not found');

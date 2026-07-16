@@ -35,14 +35,14 @@ A **backend API** for managing daily tasks and team assignments.
 Start the API server with Maven:
 
 ```bash
-mvn -q exec:java -Dexec.mainClass=com.example.App
+mvn spring-boot:run
 ```
 
 The application listens on `http://localhost:7000`.
 
 ## Requirements
 
-- JDK 25 or later (the project is compiled with Java 25).
+- JDK 21 or later (the project is compiled with Java 21).
 - Node.js 18+ for running Playwright smoke tests.
 
 ### Web dashboard
@@ -56,11 +56,11 @@ The REST API remains available at the same host for integrations and tests.
 
 ## Task Management API
 
-- `GET /tasks` - list all tasks
-- `GET /tasks/{id}` - retrieve a task by id
-- `POST /tasks` - create a new task
-- `PUT /tasks/{id}` - update an existing task
-- `DELETE /tasks/{id}` - delete a task
+- `GET /api/tasks` - list all tasks
+- `GET /api/tasks/{id}` - retrieve a task by id
+- `POST /api/tasks` - create a new task
+- `PUT /api/tasks/{id}` - update an existing task
+- `DELETE /api/api/tasks/{id}` - delete a task (No, it's /api/tasks/{id})
 
 Task JSON payload example:
 

@@ -1,10 +1,9 @@
 package com.example.controller;
 
-import com.example.exception.InvalidTaskException;
-import com.example.exception.NotFoundException;
-import com.example.model.Task;
-import com.example.model.TaskRequest;
-import com.example.service.TaskService;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,12 +17,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.List;
+import com.example.exception.InvalidTaskException;
+import com.example.exception.NotFoundException;
+import com.example.model.Task;
+import com.example.model.TaskRequest;
+import com.example.service.TaskService;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/api/tasks")
 public class TaskController {
-    private static final String LOG_PREFIX = "[TaskMaster]";
+    private static final Logger log = LoggerFactory.getLogger(TaskController.class);
     private final TaskService service;
 
     public TaskController(TaskService service) {
@@ -41,7 +44,7 @@ public class TaskController {
         int taskId = parseId(id);
         logRequest("GET", taskId);
         return service.findById(taskId)
-            .orElseThrow(() -> new NotFoundException("Task not found: " + taskId));
+                .orElseThrow(() -> new NotFoundException("Task not found: " + taskId));
     }
 
     @PostMapping
@@ -103,16 +106,16 @@ public class TaskController {
     }
 
     private void logRequest(String method, Integer taskId) {
-        String path = taskId == null ? "/tasks" : "/tasks/" + taskId;
+        String path = taskId == null ? "/api/tasks" : "/api/tasks/" + taskId;
         log("Handling " + method + " " + path);
     }
 
     private void log(String message) {
-        System.out.println(LOG_PREFIX + " " + message);
+        log.info(message);
     }
 
     private void logError(String message, Exception exception) {
-        System.out.println(LOG_PREFIX + " " + message + ": " + exception.getMessage());
+        log.error("{}: {}", message, exception.getMessage());
     }
 
     private record ErrorResponse(String error) {
